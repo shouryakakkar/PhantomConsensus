@@ -101,7 +101,7 @@ Participants to analyze: ${participants.join(", ")}
     if (typeof p.extracted.key_quotes === "string") {
       try {
         p.extracted.key_quotes = JSON.parse(p.extracted.key_quotes);
-      } catch (e) {
+      } catch {
         p.extracted.key_quotes = [p.extracted.key_quotes as unknown as string];
       }
     }

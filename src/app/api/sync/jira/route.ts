@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     const cloudId = account.providerAccountId;
     const token = account.access_token;
 
-    let baseUrl = `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3`;
+    const baseUrl = `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3`;
     let headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
 
     // 1. Search for recently updated issues (last 7 days)

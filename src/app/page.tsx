@@ -1,17 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  MessageSquare,
   ArrowRight,
   Upload,
-  Zap,
-  Shield,
-  BarChart3,
   Sparkles,
   FileText,
-  Hash,
   AlertCircle,
   Loader2,
   ChevronDown,
@@ -24,11 +19,11 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
   const [transcript, setTranscript] = useState("");
   const [decisionTopic, setDecisionTopic] = useState("");
-  const [slackChannel, setSlackChannel] = useState("");
+  const [slackChannel] = useState("");
   const [workEmail, setWorkEmail] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,7 +109,7 @@ export default function Home() {
     }
   };
 
-  const handleConnectedProviderClick = async (providerId: string, originalName: string) => {
+  const handleConnectedProviderClick = async (providerId: string) => {
     setConnectedProvider(providerId);
     setHasStoredTokens(true);
     setActiveSection("autopilot");
@@ -139,37 +134,13 @@ export default function Home() {
       } else {
         setSyncWarning("true");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error syncing:', err);
-      setSyncWarning(err.message || "true");
+      setSyncWarning(err instanceof Error ? err.message : "true");
     } finally {
       setIsSyncing(false);
     }
   };
-
-  const features = [
-    {
-      icon: <Zap className="w-5 h-5" />,
-      label: "Llama 3.3 Powered",
-      desc: "Deep belief extraction from language signals",
-      color: "from-violet-500/20 to-purple-500/10",
-      border: "border-violet-500/20",
-    },
-    {
-      icon: <BarChart3 className="w-5 h-5" />,
-      label: "Divergence Map",
-      desc: "Visual gap scoring per participant",
-      color: "from-cyan-500/20 to-blue-500/10",
-      border: "border-cyan-500/20",
-    },
-    {
-      icon: <Shield className="w-5 h-5" />,
-      label: "Privacy First",
-      desc: "Transcripts processed in-memory only",
-      color: "from-emerald-500/20 to-green-500/10",
-      border: "border-emerald-500/20",
-    },
-  ];
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -316,7 +287,7 @@ export default function Home() {
                              <button key={provider} className="glass rounded-xl p-4 flex flex-col items-center justify-center gap-3 hover:bg-foreground/5 transition-colors group" onClick={(e) => {
                                   e.preventDefault();
                                   if (isConnected) {
-                                    handleConnectedProviderClick(providerId, provider);
+                                    handleConnectedProviderClick(providerId);
                                   } else {
                                     const routes: Record<string, string> = {
                                       'Microsoft Teams': '/api/auth/teams',
@@ -476,5 +447,13 @@ export default function Home() {
         </p>
       </footer>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 text-violet-400 animate-spin" /></div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
