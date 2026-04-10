@@ -223,7 +223,7 @@ function HomeContent() {
                           <h4 className="text-xl font-medium">{connectedProvider ? `${connectedProvider.charAt(0).toUpperCase() + connectedProvider.slice(1)} Synced` : 'Account Synced'}</h4>
                           {syncWarning ? (
                             <div className="bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm px-4 py-3 rounded-xl max-w-md text-center">
-                              {syncWarning === "true" 
+                              {syncWarning === "true"
                                 ? "We couldn't detect any clear decision signals in your recent activity. Your account is connected and will monitor automatically."
                                 : syncWarning}
                             </div>
@@ -232,15 +232,13 @@ function HomeContent() {
                               We&apos;ve synced your recent activity and extracted team decisions.
                             </p>
                           )}
-                          {!syncWarning && (
-                            <button
-                               className="btn-primary py-3 px-8 rounded-xl text-sm font-semibold text-white flex items-center gap-2 mt-2"
-                               onClick={() => router.push(syncedSessionId ? `/dashboard?highlight=${syncedSessionId}` : '/dashboard')}
-                            >
-                              <LayoutDashboard className="w-4 h-4" />
-                              Review your phantom consensus
-                            </button>
-                          )}
+                          <button
+                            className="btn-primary py-3 px-8 rounded-xl text-sm font-semibold text-white flex items-center gap-2 mt-2"
+                            onClick={() => router.push(syncedSessionId ? `/dashboard?highlight=${syncedSessionId}` : '/dashboard')}
+                          >
+                            <LayoutDashboard className="w-4 h-4" />
+                            Review your phantom consensus
+                          </button>
                           <button className="text-xs text-rose-500/70 hover:text-rose-500 underline mt-8" onClick={() => setHasStoredTokens(false)}>Unlink Account</button>
                         </>
                      )}

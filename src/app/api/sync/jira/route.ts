@@ -239,7 +239,7 @@ export async function POST(request: Request) {
 
     // 8. Save to DB
     const session = await prisma.session.create({
-      data: { decisionTopic, gapScore },
+      data: { decisionTopic, gapScore, source: 'jira' },
     });
 
     for (const b of beliefs) {

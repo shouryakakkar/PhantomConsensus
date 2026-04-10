@@ -190,7 +190,7 @@ export async function POST(request: Request) {
 
     // 10. Save to DB
     const session = await prisma.session.create({
-      data: { decisionTopic, gapScore },
+      data: { decisionTopic, gapScore, source: 'slack' },
     });
 
     for (const b of beliefs) {

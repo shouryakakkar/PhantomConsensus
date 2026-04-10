@@ -20,6 +20,24 @@ import {
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { DbSession, dbSessionToSessionData } from "@/lib/types";
 
+const SOURCE_LABELS: Record<string, { label: string; color: string }> = {
+  slack:   { label: 'Slack',   color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
+  notion:  { label: 'Notion',  color: 'text-gray-300 bg-gray-500/10 border-gray-500/20' },
+  jira:    { label: 'Jira',    color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
+  teams:   { label: 'Teams',   color: 'text-sky-400 bg-sky-500/10 border-sky-500/20' },
+  manual:  { label: 'Manual',  color: 'text-violet-400 bg-violet-500/10 border-violet-500/20' },
+};
+
+function SourceBadge({ source }: { source: string | null }) {
+  if (!source) return null;
+  const meta = SOURCE_LABELS[source] ?? { label: source, color: 'text-foreground/40 bg-foreground/5 border-foreground/10' };
+  return (
+    <span className={`text-[10px] font-semibold border rounded-full px-2 py-0.5 ${meta.color}`}>
+      {meta.label}
+    </span>
+  );
+}
+
 function GapScoreBadge({ score }: { score: number }) {
   const pct = Math.round((score ?? 0) * 100);
   if (pct >= 70) {
@@ -231,6 +249,7 @@ function DashboardContent() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0 space-y-3">
                         <div className="flex items-center gap-2 flex-wrap">
+                          <SourceBadge source={session.source} />
                           {isHighlighted && (
                             <span className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2 py-0.5 font-medium">
                               ✨ Just synced

@@ -16,6 +16,7 @@ model Session {
   createdAt     DateTime      @default(now())
   decisionTopic String
   gapScore      Float?
+  source        String?       // e.g. 'notion', 'slack', 'jira', 'teams', 'manual'
   
   participants  Participant[]
   beliefs       Belief[]

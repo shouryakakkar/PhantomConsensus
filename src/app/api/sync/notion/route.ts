@@ -145,14 +145,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'No readable page content found', sessionId: null });
     }
 
-    // 3. Build transcript — Notion pages don't have per-person authors in most cases,
-    //    so we treat each page as a named participant (doc owner / section author)
+    // 3. Build transcript
     const fullTranscript = pageContents
       .map(p => `[${p.title}]:\n${p.text}`)
       .join('\n\n');
 
-    if (!looksLikeDecision(fullTranscript)) {
-      return NextResponse.json({ message: 'No decision signals detected in recent pages', sessionId: null });
+    if (fullTranscript.trim().length < 100) {
+      return NextResponse.json({ message: 'Not enough readable content found in recent pages', sessionId: null });
     }
 
     // 4. Use page titles as participant proxies (decisions often logged by page owner)
@@ -197,7 +196,7 @@ export async function POST(request: Request) {
 
     // 8. Save to DB
     const session = await prisma.session.create({
-      data: { decisionTopic, gapScore },
+      data: { decisionTopic, gapScore, source: 'notion' },
     });
 
     for (const b of beliefs) {

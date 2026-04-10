@@ -46,6 +46,7 @@ export interface DbSession {
   decisionTopic: string;
   gapScore: number | null;
   createdAt: string;
+  source: string | null;
   participants: DbParticipant[];
 }
 
