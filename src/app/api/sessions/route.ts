@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -16,7 +16,12 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(sessions);
+    // Filter out orphaned sessions that have no participants (broken/deleted records)
+    const validSessions = sessions.filter(s => s.participants.length > 0);
+
+    const response = NextResponse.json(validSessions);
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return response;
   } catch (error) {
     console.error('Sessions fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch sessions' }, { status: 500 });

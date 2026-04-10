@@ -88,7 +88,7 @@ function DashboardContent() {
   async function fetchSessions(showRefreshSpinner = false) {
     if (showRefreshSpinner) setRefreshing(true);
     try {
-      const res = await fetch("/api/sessions");
+      const res = await fetch("/api/sessions", { cache: 'no-store' });
       if (!res.ok) throw new Error("Failed to load sessions");
       const data: DbSession[] = await res.json();
       setSessions(data);
