@@ -112,7 +112,7 @@ export async function GET(req: Request) {
     // Trigger background sync
     let syncedSessionId: string | null = null;
     try {
-      const syncRes = await fetch('http://localhost:3000/api/sync/slack', {
+      const syncRes = await fetch(`${appUrl}/api/sync/slack`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.id }),

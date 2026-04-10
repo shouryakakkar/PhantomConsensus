@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var notionOauthStates: Map<string, { createdAt: number }> | undefined;
-}
-
 interface NotionTokenResponse {
   access_token: string;
   token_type: string;
@@ -26,7 +21,6 @@ interface NotionTokenResponse {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const returnedState = searchParams.get('state');
   const error = searchParams.get('error');
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -39,15 +33,6 @@ export async function GET(request: Request) {
   if (!code) {
     return NextResponse.redirect(new URL('/?error=oauth_failed&reason=no_code', appUrl));
   }
-
-  // Validate CSRF state
-  const globalStates = globalThis.notionOauthStates;
-  const stateData = globalStates?.get(returnedState ?? '');
-  if (!stateData || Date.now() - stateData.createdAt > 10 * 60 * 1000) {
-    console.error('[Notion Callback] Invalid or expired state');
-    return NextResponse.redirect(new URL('/?error=oauth_failed&reason=invalid_state', appUrl));
-  }
-  globalStates?.delete(returnedState ?? '');
 
   const clientId = process.env.NOTION_CLIENT_ID!;
   const clientSecret = process.env.NOTION_CLIENT_SECRET!;
@@ -124,7 +109,7 @@ export async function GET(request: Request) {
     // Trigger background sync
     let syncedSessionId: string | null = null;
     try {
-      const syncRes = await fetch('http://localhost:3000/api/sync/notion', {
+      const syncRes = await fetch(`${appUrl}/api/sync/notion`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.id }),

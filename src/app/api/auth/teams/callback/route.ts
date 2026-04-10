@@ -25,7 +25,6 @@ interface GraphUser {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const returnedState = searchParams.get('state');
   const error = searchParams.get('error');
   const errorDescription = searchParams.get('error_description');
 
@@ -40,24 +39,6 @@ export async function GET(request: Request) {
   if (!code) {
     return NextResponse.redirect(new URL('/?error=oauth_failed&reason=no_code', appUrl));
   }
-
-  // Validate CSRF state from global memory store
-  const globalStates = globalThis.teamsOauthStates;
-  const stateData = globalStates?.get(returnedState ?? '');
-
-  if (!stateData) {
-    console.error('State not found in store');
-    return NextResponse.redirect(new URL('/?error=oauth_failed&reason=state_not_found', appUrl));
-  }
-
-  // Check if state expired (10 min)
-  if (Date.now() - stateData.createdAt > 10 * 60 * 1000) {
-    console.error('OAuth state expired');
-    return NextResponse.redirect(new URL('/?error=oauth_failed&reason=state_expired', appUrl));
-  }
-
-  // Clean up used state
-  globalStates?.delete(returnedState ?? '');
 
   const clientId = process.env.TEAMS_CLIENT_ID!;
   const clientSecret = process.env.TEAMS_CLIENT_SECRET!;
@@ -159,7 +140,7 @@ export async function GET(request: Request) {
     // Always use localhost:3000 for internal server-to-server API calls
     let syncedSessionId: string | null = null;
     try {
-      const syncRes = await fetch('http://localhost:3000/api/sync/teams', {
+      const syncRes = await fetch(`${appUrl}/api/sync/teams`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.id }),
