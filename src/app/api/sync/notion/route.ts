@@ -25,16 +25,6 @@ interface NotionPage {
   url: string;
 }
 
-function looksLikeDecision(text: string): boolean {
-  const keywords = [
-    'decided', 'decision', 'agree', 'approved', 'confirmed', 'going with',
-    'finalized', 'moving forward', "let's do", 'we will', 'plan is',
-    'ship', 'deadline', 'launch', 'milestone', 'resolved', 'action item',
-    'next steps', 'owner', 'responsible',
-  ];
-  const lower = text.toLowerCase();
-  return keywords.some(k => lower.includes(k));
-}
 
 function extractBlockText(block: NotionBlock): string {
   const richTextSources = [
