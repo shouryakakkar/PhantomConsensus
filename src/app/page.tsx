@@ -18,6 +18,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ProviderIcon } from "@/components/ProviderIcon";
 
 function HomeContent() {
   const router = useRouter();
@@ -298,7 +299,7 @@ function HomeContent() {
                                   }
                               }}>
                                <div className="w-10 h-10 rounded-full bg-foreground/5 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                  <div className="w-5 h-5 bg-foreground/50 rounded-sm" /> 
+                                  <ProviderIcon provider={provider} className="w-5 h-5" />
                                </div>
                                <span className="text-xs font-medium text-foreground/70">{provider}</span>
                                {isConnected && <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 rounded-full">Connected</span>}

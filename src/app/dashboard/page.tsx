@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { DbSession, dbSessionToSessionData } from "@/lib/types";
+import { ProviderIcon } from "@/components/ProviderIcon";
 
 const SOURCE_LABELS: Record<string, { label: string; color: string }> = {
   slack:   { label: 'Slack',   color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
@@ -32,7 +33,8 @@ function SourceBadge({ source }: { source: string | null }) {
   if (!source) return null;
   const meta = SOURCE_LABELS[source] ?? { label: source, color: 'text-foreground/40 bg-foreground/5 border-foreground/10' };
   return (
-    <span className={`text-[10px] font-semibold border rounded-full px-2 py-0.5 ${meta.color}`}>
+    <span className={`inline-flex items-center gap-1 text-[10px] font-semibold border rounded-full pl-1.5 pr-2 py-0.5 ${meta.color}`}>
+      <ProviderIcon provider={source} className="w-3 h-3" />
       {meta.label}
     </span>
   );
